@@ -7,6 +7,7 @@ genotype_plot<-function(vcf=NULL,
                         gff=NULL,
                         popmap=NULL,
                         cluster=FALSE,
+                        snp_label_size=500000,
                         colour_scheme=c("#d4b9da","#e7298a","#980043")){
   
   # Usage:
@@ -52,8 +53,8 @@ genotype_plot<-function(vcf=NULL,
   colnames(SNP_pos)<-c("chrom","BP","y1","y2","GEN_pos")
   
   # We also need a filter for lines if we're plotting whole chr...
-  if(max(SNP_pos$BP)-min(SNP_pos$BP) > 1000000){
-    Mb_vec<-as.integer(seq(0,max(SNP_pos$BP),by=500000))
+  if(max(SNP_pos$BP)-min(SNP_pos$BP) > snp_label_size){
+    Mb_vec<-as.integer(seq(0,max(SNP_pos$BP),by=snp_label_size))
     
     filtered_SNPs<-data.frame(rbindlist(lapply(Mb_vec,function(x){
       return(SNP_pos[abs(SNP_pos$BP-x) == min(abs(SNP_pos$BP-x)),])
