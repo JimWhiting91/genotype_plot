@@ -13,7 +13,7 @@ In R:
 source("path/to/genotype_plot/R")
 ```
 
-### Tutorial
+## Tutorial
 The scripts are really just a single function that handles everything. A typical call requires the following inputs:
 ```
 new_plot <- genotype_plot(vcf="path/to/vcf",
@@ -49,14 +49,14 @@ This command therefore writes a new file to the working directory called `gt_plo
 
 After this, all plots are generated.
 
-#### Outputs
+## Outputs
 The function returns a list where elements correspond to different parts of the plots. As a standard, all plots return a `positions` and `genotypes` element which correspond to the main genotype figure (genotypes) and the genome position labels (positions). 
 
 If `cluster==TRUE`, the function also returns `dendrogram` and `dendro_labels`, which correspond to a dendrogram of the clustered haplotypes and the tip labels, respectively.
 
 Each element is a ggplot object that can be modified as an individual object in order for the user to modify any aspect of the plot as they wish.
 
-#### Plotting together
+## Plotting together
 To produce final plots, output elements can be plotted as so:
 
 For e.g. plotting genotypes and position labels:
@@ -73,12 +73,12 @@ geno_and_dendro <- cowplot::plot_grid(new_plot$dendrogram,
                                       axis="tblr",align="h",nrow=1,ncol=2,rel_widths=c(3,7))
 ```
 
-#### Examples
+## Examples
 
-Simple genotype plot with position labels:
+### Simple genotype plot with position labels:
 ![example](./basic_genotype_example2.png)
 
-Clustered genotype plot with dendrogram (and additional post-function modification of individual output elements). As seen in *Whiting et al. 2020* (https://doi.org/10.1101/2020.10.14.339333)
+### Clustered genotype plot with dendrogram (and additional post-function modification of individual output elements). As seen in *Whiting et al. 2020* (https://doi.org/10.1101/2020.10.14.339333)
 ![example_dendro](./genotype_plot_example.png)
 
 
