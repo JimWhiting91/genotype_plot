@@ -200,53 +200,6 @@ genotype_plot<-function(vcf=NULL,
             panel.border = element_blank())+
       scale_x_continuous(expand = c(0, 0))
   }
-  
-  if(length(gff)==0){
-   gene_plot <- NULL
-  } else {
-    
-    #### Make genes plot for top
-    # Read in the geneinfo and tidy
-    genes<-data.frame(fread(gff))
-    colnames(genes)[1]<-"chr"
-    genes<-genes[genes$V3 == "gene" & genes$chr == chr,]
-    genes<-genes[genes$V4 < end & genes$V5 > start,]
-    genes$molecule<-chr
-    colnames(genes)[4:5]<-c("startPoint","endPoint")
-    genes$label_x<-rowMeans(genes[,c("endPoint","startPoint")])
-    
-    
-    # get names
-    genes<-genes %>%
-      separate(V9, c("names1", "names2"), "source_gene_common_name=")
-    genes<-genes %>%
-      separate(names2, c("name", "bin"), ";")
-    
-    # Filter for uninformative
-    genes[genes$name == "None","name"]<-NA
-    
-    # Plot
-    gene_plot<-ggplot(genes, aes(xmin = startPoint, xmax = endPoint,y = molecule,label=name)) +
-      geom_gene_arrow(arrowhead_height = unit(0,"mm"),arrowhead_width = unit(0,"mm"),arrow_body_height = unit(5,"mm")) +
-      geom_text_repel(data=genes,aes(x=label_x),nudge_y      = 0.05,
-                      direction    = "x",
-                      angle        = 90,
-                      vjust        = -0.5,
-                      segment.size = 0.2,size=5) +
-      #facet_wrap(~ molecule, scales = "free", ncol = 1) +
-      scale_fill_brewer(palette = "Set3")+
-      theme_nothing()+
-      theme(panel.grid=element_blank(),
-            #axis.text = element_blank(),
-            axis.title = element_blank(),
-            axis.ticks = element_blank(),
-            legend.position="top",
-            legend.text = element_text(size=18))+
-      labs(fill="")+
-      xlim(c(start,end))+
-      coord_cartesian(ylim = c(12,0))+
-      scale_x_continuous(expand = c(0, 0))
-  }
     
     # Return everything for plots...
     output<-list(lines,genotypes,dendro,dendro_labels)
