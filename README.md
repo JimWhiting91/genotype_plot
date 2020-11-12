@@ -76,8 +76,9 @@ geno_and_dendro <- cowplot::plot_grid(new_plot$dendrogram,
 #### Examples
 
 Simple genotype plot with position labels:
-
+![example](./basic_genotype_example2.png)
 
 Clustered genotype plot with dendrogram (and additional post-function modification of individual output elements). As seen in *Whiting et al. 2020* (https://doi.org/10.1101/2020.10.14.339333)
+![example_dendro](./genotype_plot_example.png)
 
 
