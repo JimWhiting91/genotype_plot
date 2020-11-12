@@ -52,7 +52,7 @@ After this, all plots are generated.
 ## Outputs
 The function returns a list where elements correspond to different parts of the plots. As a standard, all plots return a `positions` and `genotypes` element which correspond to the main genotype figure (genotypes) and the genome position labels (positions). 
 
-If `cluster==TRUE`, the function also returns `dendrogram` and `dendro_labels`, which correspond to a dendrogram of the clustered haplotypes and the tip labels, respectively.
+If `cluster=TRUE`, the function also returns `dendrogram` and `dendro_labels`, which correspond to a dendrogram of the clustered haplotypes and the tip labels, respectively.
 
 Each element is a ggplot object that can be modified as an individual object in order for the user to modify any aspect of the plot as they wish.
 
