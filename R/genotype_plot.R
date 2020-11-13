@@ -27,7 +27,7 @@ genotype_plot<-function(vcf=NULL,
   if(substr(vcf, nchar(vcf)-2+1, nchar(vcf)) == "gz"){
     system(paste0("bcftools view -r ",chr,":",start,"-",end," ",vcf," > gt_plot_tmp.vcf"),wait=TRUE)
   } else {
-    stop("VCF needs tp bgzipped pal...")
+    stop("VCF needs to be bgzipped")
   }
   
   # Tidy up the popmap and turn into a list
