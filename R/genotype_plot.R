@@ -13,7 +13,7 @@ genotype_plot<-function(vcf=NULL,
   # start = start of region
   # end = end of region
   # gff = file with gene annotations ".gff3" format
-  # popmap = list of vectors corresponding to individuals in the VCF. Names of list should be pop names.
+  # popmap = two column data frame with column 1 for individual IDs as they appear in the VCF and column 2 for pop labels
   # cluster = whether to organise haplotypes by hclust clustering
   # colour_scheme = character vector of colour values
   
