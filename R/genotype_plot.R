@@ -28,17 +28,23 @@ genotype_plot<-function(vcf=NULL,
     system(paste0("bcftools view -r ",chr,":",start,"-",end," ",vcf," > gt_plot_tmp.vcf"),wait=TRUE)
   } else {
     stop("VCF needs tp bgzipped pal...")
-    return()
   }
+  
+  # Tidy up the popmap and turn into a list
+  popmap2 <- lapply(unique(popmap[,2]),function(pop){
+    return(as.character(popmap[popmap[,2]==pop,1]))
+  })
+  names(popmap2)<-unique(popmap[,2])
   
   # Read in the subsetted VCF
   vcf_in<-read.vcfR("gt_plot_tmp.vcf")
   
   # Filter the VCF for individuals...
-  vcf_in <- vcf_in[,c("FORMAT",unlist(popmap))]
+  vcf_in <- vcf_in[,c("FORMAT",popmap[,1])]
   
   # Keep tidy
   system("rm -f gt_plot_tmp.vcf")
+
   
   ### Make the chromosome connecting lines
   SNP_pos<-data.frame(chr=chr,
@@ -114,13 +120,13 @@ genotype_plot<-function(vcf=NULL,
   
   # Reorder
   if(cluster == FALSE){
-  name_order<-data.frame(names=unlist(popmap),
-                         index=length(unlist(popmap)):1)
-  name_order<-name_order[order(name_order$names),]
+    name_order<-data.frame(names=unlist(popmap2),
+                           index=length(unlist(popmap2)):1)
+    name_order<-name_order[order(name_order$names),]
   } else {
-  name_order<-data.frame(names=dendro_labels,
-                           index=1:length(unlist(popmap)))
-  name_order<-name_order[order(name_order$names),]
+    name_order<-data.frame(names=dendro_labels,
+                           index=1:length(unlist(popmap2)))
+    name_order<-name_order[order(name_order$names),]
   }
   
   vcf2<-vcf2[order(rownames(vcf2)),]
@@ -139,21 +145,21 @@ genotype_plot<-function(vcf=NULL,
   genos$GT<-genos$x1 + genos$x2
   
   # Pop cutoffs
-  cutoffs<-data.frame(pops=names(popmap),
+  cutoffs<-data.frame(pops=names(popmap2),
                       cutoffs=NA,
                       labs=NA)
-  cutoffs[1,2]<-length(popmap[[1]])
-  cutoffs[1,3]<-length(popmap[[1]])/2
+  cutoffs[1,2]<-length(popmap2[[1]])
+  cutoffs[1,3]<-length(popmap2[[1]])/2
   
   for(i in 2:nrow(cutoffs)){
-    cutoffs[i,2]<-cutoffs[i-1,2]+length(popmap[[i]])
+    cutoffs[i,2]<-cutoffs[i-1,2]+length(popmap2[[i]])
     cutoffs[i,3]<-mean(c(cutoffs[i-1,2],cutoffs[i,2]))
   }
-  cutoffs$cutoffs2<-length(unlist(popmap))-cutoffs$cutoffs+0.5
+  cutoffs$cutoffs2<-length(unlist(popmap2))-cutoffs$cutoffs+0.5
   
   # Tidy up to get final label pos
   cutoffs$labs2<-NA
-  cutoffs$labs2[1]<-mean(c(cutoffs$cutoffs2[1],length(unlist(popmap))))
+  cutoffs$labs2[1]<-mean(c(cutoffs$cutoffs2[1],length(unlist(popmap2))))
   for(i in 2:nrow(cutoffs)){
     cutoffs[i,"labs2"]<-mean(c(cutoffs[i,"cutoffs2"],cutoffs[i-1,"cutoffs2"]))
   }
@@ -161,27 +167,27 @@ genotype_plot<-function(vcf=NULL,
   
   # Plot genotypes based on clustering...
   if(cluster == FALSE){
-  genotypes<-ggplot(data=genos,aes(x=snp,y=index))+
-    #geom_raster(aes(fill=factor(GT)))+
-    geom_tile(aes(fill=factor(GT)))+
-    scale_fill_manual(values=colour_scheme,name="Genotype",
-                      breaks=c("0","1","2"),labels=c("HOM REF","HET","HOM ALT"))+
-    theme_bw()+
-    theme(panel.grid = element_blank(), 
-          axis.title.x = element_blank(),
-          axis.title.y = element_blank(), 
-          axis.ticks  = element_blank(),
-          axis.text.x = element_blank(),
-          axis.text.y = element_text(size=15),
-          legend.position = "bottom",
-          legend.title=element_text(size=14),
-          legend.text = element_text(size=14),
-          panel.border = element_blank())+
-    geom_hline(yintercept = c(length(unlist(popmap))+0.5,cutoffs$cutoffs2))+
-    scale_y_continuous(breaks = as.integer(cutoffs$labs2),
-                       labels = cutoffs$pops)+
-    scale_x_continuous(expand = c(0, 0))
-  
+    genotypes<-ggplot(data=genos,aes(x=snp,y=index))+
+      #geom_raster(aes(fill=factor(GT)))+
+      geom_tile(aes(fill=factor(GT)))+
+      scale_fill_manual(values=colour_scheme,name="Genotype",
+                        breaks=c("0","1","2"),labels=c("HOM REF","HET","HOM ALT"))+
+      theme_bw()+
+      theme(panel.grid = element_blank(), 
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank(), 
+            axis.ticks  = element_blank(),
+            axis.text.x = element_blank(),
+            axis.text.y = element_text(size=15),
+            legend.position = "bottom",
+            legend.title=element_text(size=14),
+            legend.text = element_text(size=14),
+            panel.border = element_blank())+
+      geom_hline(yintercept = c(length(unlist(popmap2))+0.5,cutoffs$cutoffs2))+
+      scale_y_continuous(breaks = as.integer(cutoffs$labs2),
+                         labels = cutoffs$pops)+
+      scale_x_continuous(expand = c(0, 0))
+    
   } else {
     genotypes<-ggplot(data=genos,aes(x=snp,y=index))+
       #geom_raster(aes(fill=factor(GT)))+
@@ -200,10 +206,11 @@ genotype_plot<-function(vcf=NULL,
             panel.border = element_blank())+
       scale_x_continuous(expand = c(0, 0))
   }
-    
-    # Return everything for plots...
-    output<-list(lines,genotypes,dendro,dendro_labels)
-    names(output) <- c("positions","genotypes","dendrogram","dendro_labels")
-    return(output)
-
+  
+  # Return everything for plots...
+  output<-list(lines,genotypes,dendro,dendro_labels)
+  names(output) <- c("positions","genotypes","dendrogram","dendro_labels")
+  return(output)
+  
 }
+
