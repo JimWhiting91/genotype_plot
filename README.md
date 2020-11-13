@@ -1,5 +1,5 @@
 # Genotype Plot
-## A set of functions to visualise genotypes based on a VCF
+## Visualise and cluster genotypes based on a VCF
 This repo contains two functions that can be used to subset VCFs for regions and individuals of interest and produce high-quality figures for publications.
 
 These scripts will only work on a unix-based OS i.e. Mac or Linux as they depend on `bcftools` to subset the VCF before reading in.
