@@ -30,13 +30,13 @@ new_plot <- genotype_plot(vcf="path/to/vcf",
   # chr = chr of scaf ID
   # start = start of region
   # end = end of region
-  # popmap = list of vectors corresponding to individuals in the VCF. Names of list should be pop names.
+  # popmap = two column data frame with column 1 for individual IDs as they appear in the VCF and column 2 for pop labels
   # cluster = whether to organise haplotypes by hclust clustering
   # snp_label_size = breaks for position labels, eg. plot a position every 100,000 bp.
   # colour_scheme = character vector of colour values
  
 ```
-Genotypes are plotted according to the popmap order, so genotypes are visualised within populations (list elements), labelled according to `names(popmap)`, and are plotted in the order they appear in `unlist(popmap)`, unless `cluster=TRUE` (see below).
+Genotypes are plotted according to the popmap order, so genotypes are visualised within populations, labelled according to `unique(popmap[,2])`, and are plotted in the order they appear in `popmap[,1]`, unless `cluster=TRUE` (see below).
 
 If `cluster=TRUE`, haplotypes are clustered according to `hclust`. This is not designed to be an explicit test of phylogeny, but can be useful to quickly visualise haplotype relationships. If `cluster=TRUE`, haplotypes are no longer labelled because the ordering is no longer user-defined but defined by the clustering. New labels in clustered order are returned in the output as `dendro_labels` (see Outputs).
 
@@ -48,6 +48,23 @@ The script first uses bcftools to subset the VCF based on the path given and co-
 This command therefore writes a new file to the working directory called `gt_plot_tmp.vcf` which is read in and then removed from the system with a call to `rm -f`.
 
 After this, all plots are generated.
+
+## Inputs
+The function handles the VCF outside of R using calls to `system()`, so the input in terms of the vcf and region of interest are just character strings, as described above.
+
+The popmap should be a `data.frame` object with two columns: first column = individual IDs as they appear in the VCF, and second column = population label. The values from column 2 are used as labels in the final plot. Column names are irrelevant, but the order must be column 1 for inds and column 2 for pop. This can either be made within R or read in from a file with `read.table()`.
+
+An example popmap should look like this:
+```
+> head(popmap)
+     ind pop
+1 LT_F16  LT
+2 LT_F18  LT
+3 LT_F19  LT
+4 LT_F23  LT
+5 LT_F24  LT
+6  LT_M1  LT
+```
 
 ## Outputs
 The function returns a list where elements correspond to different parts of the plots. As a standard, all plots return a `positions` and `genotypes` element which correspond to the main genotype figure (genotypes) and the genome position labels (positions). 
