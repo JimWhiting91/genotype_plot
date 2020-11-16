@@ -20,7 +20,7 @@ genotype_plot<-function(vcf=NULL,
   # Note, the gff functionality is currently not used.
   
   # Get what we need
-  lib<-c("ggdendro","ggrepel","vcfR","ggplot2","reshape2","stringr","gggenes","cowplot","dplyr","grid","parallel","tidyr","data.table","ggpubr")
+  lib<-c("ggdendro","vcfR","ggplot2","tidyr","data.table")
   lapply(lib,library,character.only=T)
   
   # Subset the VCF on the command-line for the chr of interest
