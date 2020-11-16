@@ -58,12 +58,12 @@ An example popmap should look like this:
 ```
 > head(popmap)
      ind pop
-1 LT_F16  LT
-2 LT_F18  LT
-3 LT_F19  LT
-4 LT_F23  LT
-5 LT_F24  LT
-6  LT_M1  LT
+1 LT_F16  TACHP
+2 LT_F18  TACHP
+3 LT_F19  TACHP
+4 LT_F23  TACHP
+5 LT_F24  TACHP
+6  LT_M1  TACHP
 ```
 
 ## Outputs
