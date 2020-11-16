@@ -90,6 +90,17 @@ geno_and_dendro <- cowplot::plot_grid(new_plot$dendrogram,
                                       axis="tblr",align="h",nrow=1,ncol=2,rel_widths=c(3,7))
 ```
 
+Depending on the size of the region you're looking at, these can take a long time to plot within R, so I tend to plot them directly to a PDF, e.g.
+```
+pdf("your_genotype_plot.pdf",width=10,height=8)
+
+cowplot::plot_grid(new_plot$positions,
+                   new_plot$genotypes,
+                   axis="tblr",align="v",nrow=2,ncol=1,rel_heights=c(1,9))
+
+dev.off()
+```
+
 ## Examples
 
 ### Simple genotype plot with position labels:
