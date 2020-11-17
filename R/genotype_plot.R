@@ -136,7 +136,7 @@ genotype_plot<-function(vcf=NULL,
   
   ### split the geno type by / into 2 columns
   genos<-genos %>%
-    separate(GT, c("x1", "x2"), "/")
+    separate(GT, c("x1", "x2"), "[|/]")
   genos$x1<-as.numeric(as.character(genos$x1))
   genos$x2<-as.numeric(as.character(genos$x2))
   
