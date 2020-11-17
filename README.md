@@ -72,7 +72,7 @@ If you want to produce a figure with a row per individual, rather than a row per
 ```
 > popmap[,2] <- popmap[,1]
 > head(popmap)
-      V1    pop
+      ind pop
 1 LT_F16 LT_F16
 2 LT_F18 LT_F18
 3 LT_F19 LT_F19
