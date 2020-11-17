@@ -88,6 +88,19 @@ If `cluster=TRUE`, the function also returns `dendrogram` and `dendro_labels`, w
 
 Each element is a ggplot object that can be modified as an individual object in order for the user to modify any aspect of the plot as they wish.
 
+## Manipulating the dendrogram
+The dendrogram is outputted with minimal formatting by default, but it may be desirable to format this in such a way as to highlight populations or individuals etc. The dendrogram object is just a ggplot object made with the `ggdendro` package, so can be edited however you wish (for examples, see http://www.sthda.com/english/wiki/beautiful-dendrogram-visualizations-in-r-5-must-known-methods-unsupervised-machine-learning#ggdendro-package-ggplot2-and-dendrogram).
+
+For example, if we simply want to add back in the tip labels, we can simply plot as such
+```
+# Add dendrogram tips
+dendro_with_tips <- new_plot$dendrogram +
+                    geom_text(aes(x=1:length(new_plot$dendro_labels),
+                    y=-2.5,
+                    label=new_plot$dendro_labels))
+```
+Note here that `x` and `y` are inverted because the dendrogram has been rotated 90 degrees. So here we are simply adding the `new_plot$dendro_labels` back in at inverted `x` positions of 1 to however many tips we have, and plotted them at an inverted `y` position of -2.5 so they don't overlap with the plot. In the example figure below, where individuals are represented by points, this is done by using the `new_plot$dendro_labels` to build a metadata data.frame in which individual has a population and river label that is then added in a similar way to the above but with `geom_point()`.
+
 ## Plotting together
 To produce final plots, output elements can be plotted as so:
 
