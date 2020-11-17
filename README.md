@@ -101,6 +101,8 @@ dendro_with_tips <- new_plot$dendrogram +
 ```
 Note here that `x` and `y` are inverted because the dendrogram has been rotated 90 degrees. So here we are simply adding the `new_plot$dendro_labels` back in at inverted `x` positions of 1 to however many tips we have, and plotting them at an inverted `y` position of -2.5 so they don't overlap with the plot. In the example figure below, where individuals are represented by points, this is done by using the `new_plot$dendro_labels` to build a metadata `data.frame` in which individuals have a Predation and River label that is then added in a similar way to the above but with `geom_point()`.
 
+Another way to sort of add tip labels to the dendrogram would be to run `genotype_plot` twice, the first time with `cluster=TRUE` and use the `output1$dendro_labels` to build a new popmap, e.g. `popmap2 <- data.frame(ind=output1$dendro_labels,pop=output1$dendro_labels)`. Then run again with the cluster-ordered `popmap2` in which individuals are labelled in the pop column as individuals and set `cluster=FALSE`. You can then plot the `output1$dendrogram` with `output2$genotypes` as below.
+
 ## Plotting together
 To produce final plots, output elements can be plotted as so:
 
