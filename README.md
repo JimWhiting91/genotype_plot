@@ -66,6 +66,21 @@ An example popmap should look like this:
 6  LT_M1  TACHP
 ```
 
+The VCF is also filtered using the popmap, so you can read in a VCF with many samples but only plot individuals in the popmap. When this is the case, the VCF is also filtered for invariant sites between the remaining individuals with a call to `vcfR::is.polymorphic()`.
+
+If you want to produce a figure with a row per individual, rather than a row per population, you can simply give each individual a unique value in the pop column for example to edit the popmap above we can just do `popmap[,2] <- popmap[,1]` and produce a popmap that looks like this:
+```
+> popmap[,2] <- popmap[,1]
+> head(popmap)
+      V1    pop
+1 LT_F16 LT_F16
+2 LT_F18 LT_F18
+3 LT_F19 LT_F19
+4 LT_F23 LT_F23
+5 LT_F24 LT_F24
+6  LT_M1  LT_M1
+```
+
 ## Outputs
 The function returns a list where elements correspond to different parts of the plots. As a standard, all plots return a `positions` and `genotypes` element which correspond to the main genotype figure (genotypes) and the genome position labels (positions). 
 
