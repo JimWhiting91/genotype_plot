@@ -42,9 +42,12 @@ genotype_plot<-function(vcf=NULL,
   # Filter the VCF for individuals...
   vcf_in <- vcf_in[,c("FORMAT",popmap[,1])]
   
+  # Remove invariants following filtering
+  vcf_in <- vcf_in[is.polymorphic(vcf_in,na.omit=T),]
+  
   # Keep tidy
   system("rm -f gt_plot_tmp.vcf")
-
+  
   
   ### Make the chromosome connecting lines
   SNP_pos<-data.frame(chr=chr,
@@ -151,19 +154,27 @@ genotype_plot<-function(vcf=NULL,
   cutoffs[1,2]<-length(popmap2[[1]])
   cutoffs[1,3]<-length(popmap2[[1]])/2
   
+  if(nrow(cutoffs) > 1){
   for(i in 2:nrow(cutoffs)){
     cutoffs[i,2]<-cutoffs[i-1,2]+length(popmap2[[i]])
     cutoffs[i,3]<-mean(c(cutoffs[i-1,2],cutoffs[i,2]))
+  }
   }
   cutoffs$cutoffs2<-length(unlist(popmap2))-cutoffs$cutoffs+0.5
   
   # Tidy up to get final label pos
   cutoffs$labs2<-NA
   cutoffs$labs2[1]<-mean(c(cutoffs$cutoffs2[1],length(unlist(popmap2))))
+  if(nrow(cutoffs) > 1){
   for(i in 2:nrow(cutoffs)){
     cutoffs[i,"labs2"]<-mean(c(cutoffs[i,"cutoffs2"],cutoffs[i-1,"cutoffs2"]))
   }
+  }
   
+  # Catch bad labelling for individuals
+  if(length(unique(popmap[,2])) == nrow(popmap)){
+    cutoffs[1,"labs2"] <- nrow(popmap)
+  }
   
   # Plot genotypes based on clustering...
   if(cluster == FALSE){
@@ -213,4 +224,3 @@ genotype_plot<-function(vcf=NULL,
   return(output)
   
 }
-
