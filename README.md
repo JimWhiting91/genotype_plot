@@ -18,11 +18,11 @@ The scripts are really just a single function that handles everything. A typical
 ```
 new_plot <- genotype_plot(vcf="path/to/vcf",
                           chr="chr1",
-                          start=1e6,
-                          end=2e6,
+                          start=1000000,
+                          end=2000000,
                           popmap=our_popmap,
                           cluster=FALSE,
-                          snp_label_size=1e5,
+                          snp_label_size=100000,
                           colour_scheme=c("#d4b9da","#e7298a","#980043"))
             
   # Usage:
