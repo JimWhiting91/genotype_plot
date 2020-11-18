@@ -68,7 +68,7 @@ An example popmap should look like this:
 
 The VCF is also filtered using the popmap, so you can read in a VCF with many samples but only plot individuals in the popmap. When this is the case, the VCF is also filtered for invariant sites between the remaining individuals with a call to `vcfR::is.polymorphic()`.
 
-If you want to produce a figure with a row per individual, rather than a row per population, you can simply give each individual a unique value in the pop column for example to edit the popmap above we can just do `popmap[,2] <- popmap[,1]` and produce a popmap that looks like this:
+If you want to produce a figure with a row per individual, rather than a row with only a population label (as default), you can just give each individual a unique value in the pop column for example to edit the popmap above we can just do `popmap[,2] <- popmap[,1]` and produce a popmap that looks like this:
 ```
 > popmap[,2] <- popmap[,1]
 > head(popmap)
