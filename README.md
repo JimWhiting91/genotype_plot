@@ -52,6 +52,15 @@ After this, all plots are generated.
 ## Inputs
 The function handles the VCF outside of R using calls to `system()`, so the input in terms of the vcf and region of interest are just character strings, as described above.
 
+### Preparing the VCF
+The VCF needs to be sorted, bgzipped and indexed prior to use. Sorting can be done either `bcftools sort` or vcftool's `vcf-sort` (if your VCF was produced by stacks, you'll need to use `vcf-sort`). To zip and index, the following should work:
+```
+bgzip -c your_data.vcf > your_data.vcf.gz
+tabix -f -p vcf your_data.vcf.gz
+```
+
+### Popmap
+
 The popmap should be a `data.frame` object with two columns: first column = individual IDs as they appear in the VCF, and second column = population label. The values from column 2 are used as labels in the final plot. Column names are irrelevant, but the order must be column 1 for inds and column 2 for pop. This can either be made within R or read in from a file with `read.table()`.
 
 An example popmap should look like this:
