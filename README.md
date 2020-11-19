@@ -59,6 +59,8 @@ bgzip -c your_data.vcf > your_data.vcf.gz
 tabix -f -p vcf your_data.vcf.gz
 ```
 
+IMPORTANT NOTE: Currently I'd only recommend using this with biallelic SNPs, as it may not behave as expected otherwise. I'll look into implementing support for multiallelic VCFs in future updates.
+
 ### Popmap
 
 The popmap should be a `data.frame` object with two columns: first column = individual IDs as they appear in the VCF, and second column = population label. The values from column 2 are used as labels in the final plot. Column names are irrelevant, but the order must be column 1 for inds and column 2 for pop. This can either be made within R or read in from a file with `read.table()`.
