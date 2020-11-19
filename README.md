@@ -59,7 +59,7 @@ bgzip -c your_data.vcf > your_data.vcf.gz
 tabix -f -p vcf your_data.vcf.gz
 ```
 
-IMPORTANT NOTE: Currently I'd only recommend using this with biallelic SNPs, as it may not behave as expected otherwise. I'll look into implementing support for multiallelic VCFs in future updates.
+**IMPORTANT NOTE: Currently I'd only recommend using this with biallelic SNPs, as it may not behave as expected otherwise. I'll look into implementing support for multiallelic VCFs in future updates.
 
 ### Popmap
 
