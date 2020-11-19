@@ -1,6 +1,6 @@
 genotype_plot<-function(vcf=NULL,
                         chr=NULL,
-                        start=NULL,
+                        start=0,
                         end=NULL,
                         popmap=NULL,
                         cluster=FALSE,
@@ -62,7 +62,7 @@ genotype_plot<-function(vcf=NULL,
   
   # We also need a filter for lines if we're plotting whole chr...
   if(max(SNP_pos$BP)-min(SNP_pos$BP) > snp_label_size){
-    Mb_vec<-as.integer(seq(0,max(SNP_pos$BP),by=snp_label_size))
+    Mb_vec<-as.integer(seq(start,end,by=snp_label_size))
     
     filtered_SNPs<-data.frame(rbindlist(lapply(Mb_vec,function(x){
       return(SNP_pos[abs(SNP_pos$BP-x) == min(abs(SNP_pos$BP-x)),])
@@ -100,11 +100,34 @@ genotype_plot<-function(vcf=NULL,
     
   }
   
+  # Now get our genotypes and transform
+  vcf2<-t(extract.gt(vcf_in))
+  colnames(vcf2)<-as.character(SNP_pos$GEN_pos)
+  # Pull genos again
+  genos<-reshape::melt(vcf2)
+  colnames(genos)<-c('index','snp','GT')
+  
+  ### split the geno type by / into 2 columns
+  genos<-genos %>%
+    separate(GT, c("x1", "x2"), "[|/]")
+  genos$x1<-as.numeric(as.character(genos$x1))
+  genos$x2<-as.numeric(as.character(genos$x2))
+  genos$GT <- genos$x1 + genos$x2
+  
   ### First, if we are clustering do that
-  if(cluster==TRUE){
-    # Pull genos again
-    genos2 <- extract.gt(vcf_in,as.numeric = T)
-    clust_genos <- hclust(dist(t(genos2)))
+  if(cluster){
+    
+    # Remake numeric genotype matrix
+    geno_matrix <- as.matrix(pivot_wider(genos[,c("index","snp","GT")], names_from = snp, values_from = GT))
+    matrix_inds <- geno_matrix[,1]
+    geno_matrix <- geno_matrix[,2:ncol(geno_matrix)]
+    geno_matrix <- gsub(" ","",geno_matrix)
+    colnames(geno_matrix) <- SNP_pos$BP
+    rownames(geno_matrix) <- matrix_inds
+    class(geno_matrix) <- "numeric"
+    
+    # Cluster with hclust
+    clust_genos <- hclust(dist(geno_matrix))
     
     # Plot dendrogram
     dendro <- ggdendrogram(clust_genos,rotate = T,labels = T)+
@@ -116,11 +139,7 @@ genotype_plot<-function(vcf=NULL,
     dendro <- NULL
     dendro_labels <- NULL
   }    
-  
-  ### open the region vcf
-  vcf2<-t(extract.gt(vcf_in))
-  colnames(vcf2)<-as.character(SNP_pos$GEN_pos)
-  
+    
   # Reorder
   if(cluster == FALSE){
     name_order<-data.frame(names=unlist(popmap2),
@@ -132,21 +151,22 @@ genotype_plot<-function(vcf=NULL,
     name_order<-name_order[order(name_order$names),]
   }
   
+  # Take our genotypes again but now reorder based on clustering/no clustering index
   vcf2<-vcf2[order(rownames(vcf2)),]
   rownames(vcf2)<-name_order$index
   genos<-reshape::melt(vcf2)
   colnames(genos)<-c('index','snp','GT')
-  
+
   ### split the geno type by / into 2 columns
   genos<-genos %>%
     separate(GT, c("x1", "x2"), "[|/]")
   genos$x1<-as.numeric(as.character(genos$x1))
   genos$x2<-as.numeric(as.character(genos$x2))
-  
+
   ### sum the 2 columns
   # 0 = homoz for ref, 1 = heteroz, 2 = homoz for alt
   genos$GT<-genos$x1 + genos$x2
-  
+
   # Pop cutoffs
   cutoffs<-data.frame(pops=names(popmap2),
                       cutoffs=NA,
@@ -155,10 +175,10 @@ genotype_plot<-function(vcf=NULL,
   cutoffs[1,3]<-length(popmap2[[1]])/2
   
   if(nrow(cutoffs) > 1){
-  for(i in 2:nrow(cutoffs)){
-    cutoffs[i,2]<-cutoffs[i-1,2]+length(popmap2[[i]])
-    cutoffs[i,3]<-mean(c(cutoffs[i-1,2],cutoffs[i,2]))
-  }
+    for(i in 2:nrow(cutoffs)){
+      cutoffs[i,2]<-cutoffs[i-1,2]+length(popmap2[[i]])
+      cutoffs[i,3]<-mean(c(cutoffs[i-1,2],cutoffs[i,2]))
+    }
   }
   cutoffs$cutoffs2<-length(unlist(popmap2))-cutoffs$cutoffs+0.5
   
@@ -166,9 +186,9 @@ genotype_plot<-function(vcf=NULL,
   cutoffs$labs2<-NA
   cutoffs$labs2[1]<-mean(c(cutoffs$cutoffs2[1],length(unlist(popmap2))))
   if(nrow(cutoffs) > 1){
-  for(i in 2:nrow(cutoffs)){
-    cutoffs[i,"labs2"]<-mean(c(cutoffs[i,"cutoffs2"],cutoffs[i-1,"cutoffs2"]))
-  }
+    for(i in 2:nrow(cutoffs)){
+      cutoffs[i,"labs2"]<-mean(c(cutoffs[i,"cutoffs2"],cutoffs[i-1,"cutoffs2"]))
+    }
   }
   
   # Catch bad labelling for individuals
