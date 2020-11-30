@@ -40,8 +40,10 @@ genotype_plot<-function(vcf=NULL,
   }
   
   # Tidy up the popmap and turn into a list
-  popmap <- as.data.table(popmap)
-  popmap2 <- lapply(split(popmap[,1], popmap[,2]), unlist, use.names = FALSE)
+  popmap2 <- lapply(unique(popmap[,2]),function(pop){
+     return(as.character(popmap[popmap[,2]==pop,1]))
+  })
+  names(popmap2)<-unique(popmap[,2])
   
   # Read in the subsetted VCF
   vcf_in<-read.vcfR(vcf_tempfile)
