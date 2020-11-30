@@ -34,8 +34,8 @@ our_popmap <- data.frame(ind = c("HG01914", "HG01985", "HG01986", "HG02013", "HG
 new_plot <- genotype_plot(vcf    = system.file("example.vcf.gz",            # bgzipped VCF
                                                package = "GenotypePlot"),   
                           chr    = 1,                                       # chr or scaffold ID
-                          start  = 11697036,                                # start of region
-                          end    = 11836450,                                # end = end of region
+                          start  = 11700000,                                # start of region
+                          end    = 11800000,                                # end = end of region
                           popmap = our_popmap,                              # population membership
                           cluster        = FALSE,                           # whether to organise haplotypes by hclust clustering
                           snp_label_size = 100000,                          # breaks for position labels, eg. plot a position every 100,000 bp
