@@ -1,3 +1,24 @@
+
+#' Genotype plotting
+#'
+#' @param vcf a bgzipped VCF 
+#' @param chr chr of scaf ID
+#' @param start start of region
+#' @param end end of region
+#' @param popmap two column data frame with column 1 for individual IDs as they appear in the VCF and column 2 for pop labels
+#' @param cluster whether to organise haplotypes by hclust clustering
+#' @param snp_label_size 
+#' @param colour_scheme character vector of colour values
+#'
+#' @import data.table
+#' @import ggdendro
+#' @import ggplot2
+#' @importFrom glue glue
+#' @import tidyr
+#' @import vcfR
+#' 
+#' @return
+#' @export
 genotype_plot<-function(vcf=NULL,
                         chr=NULL,
                         start=0,
@@ -6,26 +27,14 @@ genotype_plot<-function(vcf=NULL,
                         cluster=FALSE,
                         snp_label_size=500000,
                         colour_scheme=c("#d4b9da","#e7298a","#980043")){
-  
-  # Usage:
-  # vcf = a bgzipped VCF 
-  # chr = chr of scaf ID
-  # start = start of region
-  # end = end of region
-  # gff = file with gene annotations ".gff3" format
-  # popmap = two column data frame with column 1 for individual IDs as they appear in the VCF and column 2 for pop labels
-  # cluster = whether to organise haplotypes by hclust clustering
-  # colour_scheme = character vector of colour values
-  
+
   # Note, the gff functionality is currently not used.
   
-  # Get what we need
-  lib<-c("ggdendro","vcfR","ggplot2","tidyr","data.table")
-  lapply(lib,library,character.only=T)
-  
   # Subset the VCF on the command-line for the chr of interest
-  if(substr(vcf, nchar(vcf)-2+1, nchar(vcf)) == "gz"){
-    system(paste0("bcftools view -r ",chr,":",start,"-",end," ",vcf," > gt_plot_tmp.vcf"),wait=TRUE)
+  vcf_tempfile <- tempfile(pattern = "gt_plot", fileext = '.vcf')
+  on.exit({ unlink(vcf_tempfile) })
+  if(tools::file_ext(vcf) == "gz"){
+    system(glue::glue("bcftools view -r {chr}:{start}-{end} {vcf} > {vcf_tempfile}"), wait=TRUE)
   } else {
     stop("VCF needs to be bgzipped")
   }
@@ -37,24 +46,20 @@ genotype_plot<-function(vcf=NULL,
   names(popmap2)<-unique(popmap[,2])
   
   # Read in the subsetted VCF
-  vcf_in<-read.vcfR("gt_plot_tmp.vcf")
+  vcf_in<-read.vcfR(vcf_tempfile)
   
   # Filter the VCF for individuals...
-  vcf_in <- vcf_in[,c("FORMAT",popmap[,1])]
+  vcf_in <- vcf_in[,c("FORMAT",unlist(popmap[,1]))]
   
   # Remove invariants following filtering
-  vcf_in <- vcf_in[is.polymorphic(vcf_in,na.omit=T),]
-  
-  # Keep tidy
-  system("rm -f gt_plot_tmp.vcf")
-  
+  vcf_in <- vcf_in[is.polymorphic(vcf_in, na.omit=TRUE),]
   
   ### Make the chromosome connecting lines
   SNP_pos<-data.frame(chr=chr,
                       pos=as.integer(vcf_in@fix[,2]))
-  SNP_pos$y1<--0.5
-  SNP_pos$y2<--1.5
-  colnames(SNP_pos)<-c("chrom","BP","y1","y2")
+  SNP_pos$y1 <- -0.5
+  SNP_pos$y2 <- -1.5
+  colnames(SNP_pos) <- c("chrom","BP","y1","y2")
   SNP_pos$index3<-seq(min(SNP_pos$BP),max(SNP_pos$BP),
                       by=(max(SNP_pos$BP)-min(SNP_pos$BP))/nrow(SNP_pos))[1:nrow(SNP_pos)]
   
