@@ -41,7 +41,7 @@ genotype_plot<-function(vcf=NULL,
   
   # Tidy up the popmap and turn into a list
   popmap2 <- lapply(unique(popmap[,2]),function(pop){
-     return(as.character(popmap[popmap[,2]==pop,1]))
+    return(as.character(popmap[popmap[,2]==pop,1]))
   })
   names(popmap2)<-unique(popmap[,2])
   
