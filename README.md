@@ -38,7 +38,7 @@ new_plot <- genotype_plot(vcf    = system.file("example.vcf.gz",            # bg
                           end    = 11800000,                                # end = end of region
                           popmap = our_popmap,                              # population membership
                           cluster        = FALSE,                           # whether to organise haplotypes by hclust clustering
-                          snp_label_size = 100000,                          # breaks for position labels, eg. plot a position every 100,000 bp
+                          snp_label_size = 10000,                          # breaks for position labels, eg. plot a position every 100,000 bp
                           colour_scheme=c("#d4b9da","#e7298a","#980043"))   # character vector of colour values
 ```
 
