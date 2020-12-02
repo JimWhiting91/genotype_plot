@@ -32,9 +32,12 @@ genotype_plot<-function(vcf=NULL,
   
   # Subset the VCF on the command-line for the chr of interest
   vcf_tempfile <- tempfile(pattern = "gt_plot", fileext = '.vcf')
-  on.exit({ unlink(vcf_tempfile) })
+  subset_tempfile <- tempfile(pattern = "gt_plot", fileext = '.pop')
+  write.table(popmap$ind, subset_tempfile, quote=FALSE, col.names=FALSE, row.names = FALSE)
+  
+  on.exit({ unlink(c(vcf_tempfile,subset_tempfile)) })
   if(tools::file_ext(vcf) == "gz"){
-    system(glue::glue("bcftools view -r {chr}:{start}-{end} {vcf} > {vcf_tempfile}"), wait=TRUE)
+    system(glue::glue("bcftools view -S {subset_tempfile} -r {chr}:{start}-{end} {vcf} > {vcf_tempfile}"), wait=TRUE)
   } else {
     stop("VCF needs to be bgzipped")
   }
@@ -47,10 +50,7 @@ genotype_plot<-function(vcf=NULL,
   
   # Read in the subsetted VCF
   vcf_in<-read.vcfR(vcf_tempfile)
-  
-  # Filter the VCF for individuals...
-  vcf_in <- vcf_in[,c("FORMAT",unlist(popmap[,1]))]
-  
+   
   # Remove invariants following filtering
   vcf_in <- vcf_in[is.polymorphic(vcf_in, na.omit=TRUE),]
   
