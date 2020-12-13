@@ -1,19 +1,19 @@
 Package: GenotypePlot
 Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Version: 0.1
 Authors@R: 
     person(given = "James",
-           family = "Whitting",
+           family = "Whiting",
            role = c("aut", "cre"),
            email = "J.Whiting2@exeter.ac.uk",
            comment = c(ORCID = "0000-0001-8936-4991"))
-Description: What the package does (one paragraph).
+Description: GenotypePlot performs visualisation of biallelic SNP VCFs, as well as simple clustering for preliminary haplotype analyses.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to
     pick a license
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Imports:
   data.table,
   ggdendro,

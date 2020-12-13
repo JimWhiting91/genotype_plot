@@ -7,20 +7,24 @@
 genotype_plot(
   vcf = NULL,
   chr = NULL,
-  start = NULL,
+  start = 0,
+  vcf_object = NULL,
   end = NULL,
   popmap = NULL,
   cluster = FALSE,
   snp_label_size = 5e+05,
-  colour_scheme = c("#d4b9da", "#e7298a", "#980043")
+  colour_scheme = c("#d4b9da", "#e7298a", "#980043"),
+  invariant_filter = TRUE
 )
 }
 \arguments{
-\item{vcf}{a bgzipped VCF}
+\item{vcf}{path to a bgzipped vcf}
 
 \item{chr}{chr of scaf ID}
 
 \item{start}{start of region}
+
+\item{vcf_object}{a vcfR object to plot}
 
 \item{end}{end of region}
 
@@ -28,9 +32,11 @@ genotype_plot(
 
 \item{cluster}{whether to organise haplotypes by hclust clustering}
 
-\item{snp_label_size}{}
+\item{snp_label_size}{physical distance between snp label markers}
 
 \item{colour_scheme}{character vector of colour values}
+
+\item{invariant_filter}{boolean to remove invariants}
 }
 \value{
 

@@ -25,7 +25,7 @@ remotes::install_github("JimWhiting91/genotype_plot")
 ```
 
 ## Tutorial
-The package is really just a single function that handles everything. A typical call requires the following coding:
+The package is really just a single function that handles everything. A typical call requires the following coding (NOTE: you can just give the full path to your vcf rather than use system.file):
 
 ```{r tutorial, results = 'hide', message = FALSE}
 library(GenotypePlot)
@@ -42,7 +42,8 @@ new_plot <- genotype_plot(vcf    = system.file("example.vcf.gz",            # bg
                           popmap = our_popmap,                              # population membership
                           cluster        = FALSE,                           # whether to organise haplotypes by hclust clustering
                           snp_label_size = 10000,                          # breaks for position labels, eg. plot a position every 100,000 bp
-                          colour_scheme=c("#d4b9da","#e7298a","#980043"))   # character vector of colour values
+                          colour_scheme=c("#d4b9da","#e7298a","#980043"),   # character vector of colour values
+                          invariant_filter = TRUE)                         # Filter any invariant sites before plotting
 ```
 
 This can be minimally assembled into a plot for output.
@@ -67,8 +68,25 @@ This command therefore writes a new file to the session temporary directory, whi
 
 After this, all plots are generated.
 
+## No bcftools?
+No problem. It is possible to use the package on vcfR objects directly by reading any pre-made VCF into R with `my_vcf <- read.vcfR("path/to/vcf")` and then parsing this object to `genotype_plot()` with `vcf_object = my_vcf`. If doing this, the `chr`, `start`, and `end` variables are set automatically using the chromosome ID and min and max BP positions of the vcf object. For example:
+
+```R
+new_plot <- genotype_plot(vcf    =  my_vcf,
+                          popmap = our_popmap,                              
+                          cluster        = FALSE,                           
+                          snp_label_size = 10000,                          
+                          colour_scheme=c("#d4b9da","#e7298a","#980043"))   
+```
+
+As for plotting VCFs generally, only vcfR objects with one chromosome or scaffold ID are permitted.
+
+This functionality can also be applied to more simply plotting VCFs being manipulated/analysed in R with vcfR.
+
+For more info on vcfR, see here: https://knausb.github.io/vcfR_documentation/
+
 ## Inputs
-The function handles the VCF outside of R using calls to `system()`, so the input in terms of the vcf and region of interest are just character strings, as described above.
+The function handles the VCF outside of R using calls to `system()`, so the input in terms of the VCF and region of interest are just character strings, as described above.
 
 ### Preparing the VCF
 The VCF needs to be sorted, bgzipped and indexed prior to use. Sorting can be done either `bcftools sort` or vcftool's `vcf-sort` (if your VCF was produced by stacks, you'll need to use `vcf-sort`). To zip and index, the following should work:
@@ -173,4 +191,15 @@ dev.off()
 ### Clustered genotype plot with dendrogram (and additional post-function modification of individual output elements). As seen in *Whiting et al. 2020* (https://doi.org/10.1101/2020.10.14.339333)
 ![example_dendro](./genotype_plot_example.png)
 
+## Change Log
+#### v0.1
+  * Individual filtering/reordering performed with bcftools, resolves issues with filtering vcf with vcfR.
+  * Popmap is checked against the VCF prior to reading in, and errors are caught.
+  * `vcf_object` flag added, can be used to read vcfR objected already in R and allows package to be used with windows
+  * Error messages and general reporting fixes
+  * `invariant_filter` flag added, so invariant filtering now optional but still default.
+  * SNP marker labels improved so are added at regular intervals
+
+#### v0.0.9
+Original R package
 
