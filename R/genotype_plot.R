@@ -20,6 +20,7 @@
 #' @import vcfR
 #' @importFrom stats dist
 #' @importFrom stats hclust
+#' @importFrom reshape2 melt
 #' 
 #' @return
 #' @export
@@ -160,7 +161,7 @@ genotype_plot<-function(vcf=NULL,
   
   colnames(vcf2)<-as.character(SNP_pos$GEN_pos)
   # Pull genos again
-  genos<-reshape::melt(vcf2)
+  genos<-reshape2::melt(vcf2)
   colnames(genos)<-c('index','snp','GT')
   
   ### split the geno type by / into 2 columns
@@ -213,7 +214,7 @@ genotype_plot<-function(vcf=NULL,
   # Take our genotypes again but now reorder based on clustering/no clustering index
   vcf2<-vcf2[order(rownames(vcf2)),]
   rownames(vcf2)<-name_order$index
-  genos<-reshape::melt(vcf2)
+  genos<-reshape2::melt(vcf2)
   colnames(genos)<-c('index','snp','GT')
   
   ### split the geno type by / into 2 columns
