@@ -76,10 +76,7 @@ genotype_plot<-function(vcf=NULL,
     return(as.character(popmap[popmap[,2]==pop,1]))
   })
   names(popmap2)<-unique(popmap[,2])
-  
-  # Filter the VCF for individuals...
-  vcf_in <- vcf_in[,c("FORMAT",unlist(popmap[,1]))]
-  
+
   # Remove invariants following filtering
   if(invariant_filter){
     to_prune <- is.polymorphic(vcf_in,na.omit = T)
