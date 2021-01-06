@@ -90,7 +90,7 @@ read.vcfR("path/to/vcf")` and then parsing this object to
 ID and min and max BP positions of the vcf object. For example:
 
 ``` r
-new_plot <- genotype_plot(vcf    =  my_vcf,
+new_plot <- genotype_plot(vcf_object  =  my_vcf,
                           popmap = our_popmap,                              
                           cluster        = FALSE,                           
                           snp_label_size = 10000,                          

@@ -72,7 +72,7 @@ After this, all plots are generated.
 No problem. It is possible to use the package on vcfR objects directly by reading any pre-made VCF into R with `my_vcf <- read.vcfR("path/to/vcf")` and then parsing this object to `genotype_plot()` with `vcf_object = my_vcf`. If doing this, the `chr`, `start`, and `end` variables are set automatically using the chromosome ID and min and max BP positions of the vcf object. For example:
 
 ```R
-new_plot <- genotype_plot(vcf    =  my_vcf,
+new_plot <- genotype_plot(vcf_object  =  my_vcf,
                           popmap = our_popmap,                              
                           cluster        = FALSE,                           
                           snp_label_size = 10000,                          
