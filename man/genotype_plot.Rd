@@ -2,45 +2,60 @@
 % Please edit documentation in R/genotype_plot.R
 \name{genotype_plot}
 \alias{genotype_plot}
-\title{Genotype plotting}
+\title{Genotype Plotting}
 \usage{
 genotype_plot(
   vcf = NULL,
   chr = NULL,
   start = 0,
-  vcf_object = NULL,
   end = NULL,
   popmap = NULL,
   cluster = FALSE,
-  snp_label_size = 5e+05,
-  colour_scheme = c("#d4b9da", "#e7298a", "#980043"),
-  invariant_filter = TRUE
+  snp_label_size = 1e+05,
+  colour_scheme = c("#FCD225", "#C92D59", "#300060"),
+  vcf_object = NULL,
+  invariant_filter = TRUE,
+  is.multi_allelic = FALSE,
+  polarise_genotypes = NULL,
+  plot_allele_frequency = FALSE,
+  plot_phased = FALSE,
+  missingness = 0.5
 )
 }
 \arguments{
-\item{vcf}{path to a bgzipped vcf}
+\item{vcf}{Path to a bgzipped vcf as a character string.}
 
-\item{chr}{chr of scaf ID}
+\item{chr}{Chr of scaf ID as a character string.}
 
-\item{start}{start of region}
+\item{start}{Start of region as numeric/integer.}
 
-\item{vcf_object}{a vcfR object to plot}
+\item{end}{End of region as numeric/integer.}
 
-\item{end}{end of region}
+\item{popmap}{Two column data frame with column 1 for individual IDs as they appear in the VCF and column 2 for pop labels.}
 
-\item{popmap}{two column data frame with column 1 for individual IDs as they appear in the VCF and column 2 for pop labels}
+\item{cluster}{Logical TRUE/FALSE whether to organise haplotypes by hclust clustering.}
 
-\item{cluster}{whether to organise haplotypes by hclust clustering}
+\item{snp_label_size}{Physical distance between snp label markers as numeric/integer.}
 
-\item{snp_label_size}{physical distance between snp label markers}
+\item{colour_scheme}{Character vector of colour values, must be length 3.}
 
-\item{colour_scheme}{character vector of colour values}
+\item{vcf_object}{A vcfR object to plot, specified as an alternative to vcf, chr, start and end.}
 
-\item{invariant_filter}{boolean to remove invariants}
+\item{invariant_filter}{Logical TRUE/FALSE to remove invariants.}
+
+\item{is.multi_allelic}{Logical TRUE/FALSE to handle multi-allelic VCFs.}
+
+\item{polarise_genotypes}{Character string that matches a population in the popmap, genotypes are polarised to the major allele in this population.}
+
+\item{plot_allele_frequency}{Logical TRUE/FALSE to switch on/off plotting per-population allele frequencies.}
+
+\item{plot_phased}{Logical TRUE/FALSE to determine whether we plot genotypes or phased haplotypes.}
+
+\item{missingness}{Numeric between 0-1 to filter for missing genotypes.}
 }
 \value{
-
+A list of plottable objects including genotypes, SNP labels, dendrogram
 }
 \description{
-Genotype plotting
+Visualises genotypes within a VCF file located somewhere on the system, or loaded as a vcfR object
 }

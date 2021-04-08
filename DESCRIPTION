@@ -1,26 +1,33 @@
 Package: GenotypePlot
-Title: What the Package Does (One Line, Title Case)
-Version: 0.1
-Authors@R: 
+Title: Visualises Genotypes Within a VCF File Located Somewhere on the System, or Loaded as a vcfR Object
+Version: 0.2
+Authors@R:
     person(given = "James",
            family = "Whiting",
            role = c("aut", "cre"),
-           email = "J.Whiting2@exeter.ac.uk",
+           email = "jwhiting2315@gmail.com",
            comment = c(ORCID = "0000-0001-8936-4991"))
 Description: GenotypePlot performs visualisation of biallelic SNP VCFs, as well as simple clustering for preliminary haplotype analyses.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+    Other available filtering/plotting options include handling allele frequencies, polarisation, phased haplotypes, invariant filtering and missing data filtering.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports:
-  data.table,
-  ggdendro,
-  ggplot2,
-  glue,
-  tidyr,
-  vcfR,
-  reshape2
-Suggests: 
+    data.table,
+    ggdendro,
+    ggplot2,
+    glue,
+    tidyr,
+    vcfR,
+    reshape2,
+    pegas,
+    adegenet,
+    viridis,
+    stats,
+    bedr,
+    cowplot,
+    ade4
+Suggests:
     testthat

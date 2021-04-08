@@ -4,6 +4,8 @@ The `example.vcf.gz` file included here is sourced from 1000 Genomes project and
 
 The VCF has also been filtered to retain only biallelic SNPs and no indels.
 
+`example_multi.vcf.gz` is identical, but two SNPs have been made to be multi allelic to test functionality.
+
 ```
 ##fileDate=20140730
 ##reference=ftp://ftp.1000genomes.ebi.ac.uk//vol1/ftp/technical/reference/phase2_reference_assembly_sequence/hs37d5.fa.gz
