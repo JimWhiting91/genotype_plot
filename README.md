@@ -37,6 +37,8 @@ library(GenotypePlot)
 our_popmap <- data.frame(ind = c("HG01914", "HG01985", "HG01986", "HG02013", "HG02051", "HG01879", "HG01880"),
                          pop = c(rep("CEU", 5), "XAA", "LL1"),
                          stringsAsFactors = FALSE)
+
+# Make the genotype plot
 new_plot <- genotype_plot(vcf    = system.file("example.vcf.gz",            # bgzipped VCF
                                                package = "GenotypePlot"),   
                           chr    = 1,                                       # chr or scaffold ID
@@ -67,7 +69,7 @@ e.g.
 
 ``` r
 pdf("your_genotype_plot.pdf",width=10,height=8)
-combine_genotype_plot
+combine_genotype_plot(new_plot)
 dev.off()
 ```
 
