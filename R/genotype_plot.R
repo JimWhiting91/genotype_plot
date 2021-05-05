@@ -13,6 +13,7 @@
 #' @param colour_scheme Character vector of colour values, must be length 3.
 #' @param invariant_filter Logical TRUE/FALSE to remove invariants.
 #' @param is.multi_allelic Logical TRUE/FALSE to handle multi-allelic VCFs.
+#' @param is.haploid Logical TRUE/FALSE to handle haploid genotypes.
 #' @param polarise_genotypes Character string that matches a population in the popmap, genotypes are polarised to the major allele in this population.
 #' @param plot_allele_frequency Logical TRUE/FALSE to switch on/off plotting per-population allele frequencies.
 #' @param plot_phased Logical TRUE/FALSE to determine whether we plot genotypes or phased haplotypes.
@@ -30,6 +31,7 @@
 #' @importFrom ade4 dudi.pca
 #' @importFrom stats dist
 #' @importFrom stats hclust
+#' @importFrom stats na.omit
 #' @importFrom reshape2 melt
 #' @importFrom bedr check.binary
 #' 
@@ -46,6 +48,7 @@ genotype_plot<-function(vcf=NULL,
                         vcf_object=NULL,
                         invariant_filter=TRUE,
                         is.multi_allelic=FALSE,
+                        is.haploid=FALSE,
                         polarise_genotypes=NULL,
                         plot_allele_frequency=FALSE,
                         plot_phased=FALSE,
@@ -231,6 +234,15 @@ genotype_plot<-function(vcf=NULL,
   # Now get our genotypes and transform
   vcf2<-t(extract.gt(vcf_in))
   
+  # Convert to hom genotypes if the vcf is haploid
+  if(is.haploid){
+    if(any(names(table(is.biallelic(vcf_in))) == "FALSE")){
+      stop("Error, haploid VCF contains multiallelic loci. Please remove or coerce to biallelic sites before plotting.")
+    }
+    vcf2[vcf2=="0"] <- "0/0"
+    vcf2[vcf2=="1"] <- "1/1"
+  }
+  
   # If we are polarising the VCF we will do that here
   if(!(is.null(polarise_genotypes))){
     # Don't handle mutli-allelic
@@ -277,7 +289,7 @@ genotype_plot<-function(vcf=NULL,
     to_polarise <- which(major_alleles == 1)
     
     # Get the dividier
-    geno_format <- strsplit(vcf2[1,1],"")[[1]][2]
+    geno_format <- strsplit(unique(na.omit(vcf2[1,])),"")[[1]][2]
     # Check this
     if(geno_format != "|" & plot_phased){
       stop("Error: VCF is not in phased format (e.g. 0|1)")
@@ -296,7 +308,7 @@ genotype_plot<-function(vcf=NULL,
     gt <- t(vcf2)
     
     # Get the dividier
-    geno_format <- strsplit(vcf2[1,1],"")[[1]][2]
+    geno_format <- strsplit(unique(na.omit(vcf2[1,]))[1],"")[[1]][2]
     
     # Convert to numbers
     gt[gt == paste0("0",geno_format,"0")] <- 0
@@ -340,6 +352,7 @@ genotype_plot<-function(vcf=NULL,
     rownames(AF_mat) <- colnames(vcf2)
     AF_mat_long <- reshape2::melt(AF_mat)
     colnames(AF_mat_long) <- c("snp_pos","pop","AF")
+    
   }
   
   # Pull genos again
@@ -356,7 +369,7 @@ genotype_plot<-function(vcf=NULL,
       
       # Check this
       # Get the divider
-      geno_format <- strsplit(vcf2[1,1],"")[[1]][2]
+      geno_format <- strsplit(unique(na.omit(vcf2[1,])),"")[[1]][2]
       if(geno_format != "|" & plot_phased){
         stop("Error: VCF is not in phased format (e.g. 0|1)")
       }
@@ -447,9 +460,15 @@ genotype_plot<-function(vcf=NULL,
     genos <- genos[genos$index %in% name_order$names,]
     genos$index <- as.character(genos$index)
     
+    # Store the new indices in a dummy variable
+    index2 <- rep(NA,nrow(genos))
     for(i in 1:nrow(name_order)){
-      genos[genos$index == name_order$names[i],"index"] <- as.character(name_order$index[i])
+      #genos[genos$index == name_order$names[i],"index"] <- as.character(name_order$index[i])
+      index2[which(genos$index == name_order$names[i])] <- as.character(name_order$index[i])
     }
+    
+    # And replace the index column with index2
+    genos$index <- index2
     
     # Pop cutoffs
     cutoffs<-data.frame(pops=names(popmap2),
@@ -475,8 +494,14 @@ genotype_plot<-function(vcf=NULL,
       }
     }
     
-    # Catch bad labelling for individuals
-    if(length(unique(popmap[,2])) == nrow(popmap)){
+    # # Catch bad labelling for individuals
+    # if(length(unique(popmap[,2])) == nrow(popmap)){
+    #   cutoffs[1,"labs2"] <- nrow(popmap)
+    # }
+    
+    # Label again...
+    # Catch bad labelling for individuals accounting for popmaps where first 2 rows are pops
+    if(length(popmap2[[1]]) == 1 & length(popmap2[[1]]) == 1){
       cutoffs[1,"labs2"] <- nrow(popmap)
     }
     
@@ -508,7 +533,7 @@ genotype_plot<-function(vcf=NULL,
                 legend.text = element_text(size=14),
                 panel.border = element_blank())+
           geom_hline(yintercept = c(length(unlist(popmap2))+0.5,cutoffs$cutoffs2))+
-          scale_y_continuous(breaks = as.integer(cutoffs$labs2),
+          scale_y_continuous(breaks = as.numeric(cutoffs$labs2),
                              labels = cutoffs$pops)+
           scale_x_continuous(expand = c(0, 0))
         
@@ -518,12 +543,15 @@ genotype_plot<-function(vcf=NULL,
       cluster_pca=NULL
       
       # Apply phasing...
-      if(!plot_phased){
-        genotypes <- suppressMessages(genotypes + scale_fill_manual(values=colour_scheme,name="Genotype",
-                                                                    breaks=c("0","1","2"),labels=c("HOM REF","HET","HOM ALT")))
-      } else {
+      if(plot_phased){
         genotypes <- suppressMessages(genotypes + scale_fill_manual(values=colour_scheme[c(1,3)],name="Haplotype",
                                                                     breaks=c("0","1"),labels=c("REF","ALT")))
+      } else if(is.haploid){
+        genotypes <- suppressMessages(genotypes + scale_fill_manual(values=colour_scheme[c(1,3)],name="Haploid Genotype",
+                                                                    breaks=c("0","2"),labels=c("REF","ALT")))                                                                    
+      } else {
+        genotypes <- suppressMessages(genotypes + scale_fill_manual(values=colour_scheme,name="Genotype",
+                                                                    breaks=c("0","1","2"),labels=c("HOM REF","HET","HOM ALT")))
       }
       
     } else {
@@ -549,12 +577,15 @@ genotype_plot<-function(vcf=NULL,
           scale_x_continuous(expand = c(0, 0))
       )
       # Apply phasing...
-      if(!plot_phased){
-        genotypes <- suppressMessages(genotypes + scale_fill_manual(values=colour_scheme,name="Genotype",
-                                                                    breaks=c("0","1","2"),labels=c("HOM REF","HET","HOM ALT")))
-      } else {
+      if(plot_phased){
         genotypes <- suppressMessages(genotypes + scale_fill_manual(values=colour_scheme[c(1,3)],name="Haplotype",
                                                                     breaks=c("0","1"),labels=c("REF","ALT")))
+      } else if(is.haploid){
+        genotypes <- suppressMessages(genotypes + scale_fill_manual(values=colour_scheme[c(1,3)],name="Haploid Genotype",
+                                                                    breaks=c("0","2"),labels=c("REF","ALT")))                                                                    
+      } else {
+        genotypes <- suppressMessages(genotypes + scale_fill_manual(values=colour_scheme,name="Genotype",
+                                                                    breaks=c("0","1","2"),labels=c("HOM REF","HET","HOM ALT")))
       }
       
     }

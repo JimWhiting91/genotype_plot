@@ -16,6 +16,7 @@ genotype_plot(
   vcf_object = NULL,
   invariant_filter = TRUE,
   is.multi_allelic = FALSE,
+  is.haploid = FALSE,
   polarise_genotypes = NULL,
   plot_allele_frequency = FALSE,
   plot_phased = FALSE,
@@ -44,6 +45,8 @@ genotype_plot(
 \item{invariant_filter}{Logical TRUE/FALSE to remove invariants.}
 
 \item{is.multi_allelic}{Logical TRUE/FALSE to handle multi-allelic VCFs.}
+
+\item{is.haploid}{Logical TRUE/FALSE to handle haploid genotypes.}
 
 \item{polarise_genotypes}{Character string that matches a population in the popmap, genotypes are polarised to the major allele in this population.}
 

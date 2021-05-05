@@ -296,6 +296,10 @@ normal.
 
 ## Change Log
 
+    #### v0.2.1
+      * is.haploid flag for handling VCFs with haploid genotypes
+      * Bug fix for cases where VCF IDs are numbers rather than characters
+      
     #### v0.2
       * Includes plotting options: phasing, allele frequencies, polarisation
       * Handling for multi-allelic VCFs
