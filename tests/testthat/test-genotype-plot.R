@@ -141,3 +141,38 @@ combined_plot <- combine_genotype_plot(new_plot)
 expect_equal(class(combined_plot), c("gg", "ggplot"), label = "ggplot type")
 })
 
+test_that("plotting haploid genotypes works",{
+  our_popmap <- data.frame(ind = c("HG01914", "HG01985", "HG01986", "HG02013", "HG02051", "HG01879", "HG01880"),
+                           pop = c(rep("CEU", 5), "XAA", "LL1"),
+                           stringsAsFactors = FALSE)
+  
+  vcf_in <- vcfR::read.vcfR(system.file("example.vcf.gz",
+                                        package = "GenotypePlot"))
+  
+  # Make it haploid
+  gts <- extract.gt(vcf_in)
+  gts[gts=="0|0"] <- "0"
+  gts[gts=="0|1"] <- "0"
+  gts[gts=="1|0"] <- "0"
+  gts[gts=="1|1"] <- "1"
+  gts_haps <- data.frame(FORMAT="GT",
+                         gts)
+  vcf_in@gt <- as.matrix(gts_haps)
+  new_plot <- genotype_plot(vcf_object = vcf_in,
+                            popmap = our_popmap,
+                            cluster        = TRUE,
+                            snp_label_size = 100000,
+                            is.haploid = T,
+                            colour_scheme=c("#d4b9da","#e7298a","#980043"))
+  
+  combined_plot <- combine_genotype_plot(new_plot)
+  expect_equal(class(new_plot), "list", label = "correct type");
+  expect_equal(names(new_plot), c("positions", "genotypes", "dendrogram", "dendro_labels","cluster_pca"), label = "list has correct names")
+  expect_equal(class(new_plot$positions), c("gg", "ggplot"), label = "ggplot type")
+  expect_equal(class(new_plot$genotypes), c("gg", "ggplot"), label = "ggplot type")
+  expect_equal(class(new_plot$dendrogram), c("gg", "ggplot"), label = "ggplot type")
+  expect_equal(class(new_plot$dendro_labels), c("character"), label = "character type")
+  expect_equal(class(new_plot$cluster_pca), c("pca", "dudi"), label = "pca type")
+  
+})
+
