@@ -353,10 +353,6 @@ genotype_plot<-function(vcf=NULL,
     AF_mat_long <- reshape2::melt(AF_mat)
     colnames(AF_mat_long) <- c("snp_pos","pop","AF")
     
-    # Correct for haploid data...
-    if(is.haploid){
-      AF_mat_long$AF <- AF_mat_long$AF/2
-    }
   }
   
   # Pull genos again
