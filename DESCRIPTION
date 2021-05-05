@@ -1,6 +1,6 @@
 Package: GenotypePlot
 Title: Visualises Genotypes Within a VCF File Located Somewhere on the System, or Loaded as a vcfR Object
-Version: 0.2
+Version: 0.2.1
 Authors@R:
     person(given = "James",
            family = "Whiting",
