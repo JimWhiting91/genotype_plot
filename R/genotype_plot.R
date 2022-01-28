@@ -601,7 +601,7 @@ genotype_plot<-function(vcf=NULL,
       ggplot(data=data.frame(AF_mat_long),aes(x=snp_pos,y=pop_F,fill=AF))+
         #geom_raster(aes(fill=factor(GT)))+
         geom_tile()+
-        scale_fill_viridis(option="B")+
+        scale_fill_viridis(option="B",begin=0,end=1)+
         theme_bw()+
         theme(panel.grid = element_blank(), 
               axis.title.x = element_blank(),

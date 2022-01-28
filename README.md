@@ -1,6 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5913504.svg)](https://doi.org/10.5281/zenodo.5913504)
+
 # Genotype Plot
 
 ## Visualise and cluster genotypes based on a VCF
@@ -16,6 +18,22 @@ systems. However the function can be used on other systems by using the
 
 For a demo of the plotting options, see the shiny app:
 <https://jimw91.shinyapps.io/genotype_plot_demo>
+
+## Citation
+
+If you use Genotype Plot, please cite Zenodo DOI using the following
+(BibTeX):
+
+    @software{james_r_whiting_2022_5913504,
+      author       = {James R Whiting},
+      title        = {JimWhiting91/genotype\_plot: Genotype Plot},
+      month        = jan,
+      year         = 2022,
+      publisher    = {Zenodo},
+      version      = {v0.2.1},
+      doi          = {10.5281/zenodo.5913504},
+      url          = {https://doi.org/10.5281/zenodo.5913504}
+    }
 
 ## Installation
 

@@ -12,6 +12,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5913504.svg)](https://doi.org/10.5281/zenodo.5913504)
+
 # Genotype Plot
 ## Visualise and cluster genotypes based on a VCF
 This function can be used to subset VCFs for regions and individuals of interest and produce high-quality figures for publications.
@@ -19,6 +21,21 @@ This function can be used to subset VCFs for regions and individuals of interest
 The function depends on R being able to access a local installation of bcftools in order to handle VCFs outside of R prior to reading in and visualising. This functionality is only available therefore on UNIX systems. However the function can be used on other systems by using the `vcf_object` functionality (see below).
 
 For a demo of the plotting options, see the shiny app: https://jimw91.shinyapps.io/genotype_plot_demo
+
+## Citation
+If you use Genotype Plot, please cite Zenodo DOI using the following (BibTeX):
+```
+@software{james_r_whiting_2022_5913504,
+  author       = {James R Whiting},
+  title        = {JimWhiting91/genotype\_plot: Genotype Plot},
+  month        = jan,
+  year         = 2022,
+  publisher    = {Zenodo},
+  version      = {v0.2.1},
+  doi          = {10.5281/zenodo.5913504},
+  url          = {https://doi.org/10.5281/zenodo.5913504}
+}
+```
 
 ## Installation
 ```{r install, eval = FALSE, echo = TRUE}
